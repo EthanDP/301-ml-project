@@ -3,9 +3,13 @@ import os
 
 import torch
 import pandas as pd
+import numpy as np
 from torchvision.io import read_image
 from torch.utils.data import Dataset
 from scipy.io import wavfile
+from scipy.signal import spectrogram
+import matplotlib.pyplot as plt
+import torchaudio
 
 # Parent class with methods used by all types of speech datasets
 class SpeechDataset(Dataset):
@@ -49,5 +53,42 @@ class SpeechAudioDataset(SpeechDataset):
 
 # Not implemented yet
 class SpeechSpectrogramDataset(SpeechDataset):
-    def __init__(self):
-        pass
+    def __init__(self, signal, chunk_size):
+        self.signal = signal
+        self.chunk = chunk_size
+        self.SAMPLING_RATE = 44100
+        self.spectrogram_fs, self.spectrogram_t, self.spectrogram = spectrogram(self.signal, fs=self.SAMPLING_RATE, window='hanning')
+
+    def mfc(self):
+        '''
+        Mel-Frequency Cepstrum: this method implements the algorithm to create and use Mel-Frequency Cepstrum analysis.
+
+        inputs: 
+            none, method runs on internal variables
+        outputs:
+            coefficients - an array of the Mel-frequency coefficients
+        '''
+        # algorithm: |F^-1[log(|F[x]|^2)]|^2
+        #output_array = []
+        #for time in range(self.spectrogram_t.shape[0]/self.chunk):
+         #   squared = [bit**2 for bit in (np.abs(self.spectrogram[time]))]
+         #   log = [np.log10(logbit) for logbit in squared]
+         #   inverse_fft = np.fft.ifft(log)
+         #   output = [out**2 for out in (np.abs(inverse_fft))]
+         #   output_array.append(output)
+
+        #mel_frequency = np.array(output_array)
+        COEFFICIENTS_NUM = 40
+        mfc_object = torchaudio.transforms.MFCC(sample_rate=self.SAMPLING_RATE, n_mfcc=COEFFICIENTS_NUM)
+        coefficients = mfc_object(self.signal)
+
+    def plot_spectrogram(self):
+        '''
+        Plots the spectrogram to help with visualization and debugging down the line.
+
+        inputs:
+            none, method runs on internal variables
+        outputs:
+            none, shows plot of spectrogram
+        '''
+        
