@@ -92,3 +92,13 @@ class SpeechSpectrogramDataset(SpeechDataset):
             none, shows plot of spectrogram
         '''
         
+        data = [0.01, 0.02, 0.05, 0.06, 1.00, 1.11, 2.3]
+        (dummy, sad) = sc.wavfile.read('sad071.wav')
+        (dummy1, angry) = sc.wavfile.read('angry087.wav')
+        #print(sad.shape)
+        rate = 44100
+        #(dummy, noise) = sc.wavfile.read('compressed5.wav')
+        plt.specgram(sad, NFFT = 1000, Fs = rate, cmap = "rainbow", scale_by_freq = True, mode = 'magnitude')
+        plt.specgram(angry, NFFT = 1000, Fs = rate, cmap = "rainbow", scale_by_freq = True, mode = 'magnitude')
+
+        
