@@ -51,12 +51,11 @@ class SpeechAudioDataset(SpeechDataset):
         return (audio, samplerate), label
 
 
-# Not implemented yet
+# implementation in progress
 class SpeechSpectrogramDataset(SpeechDataset):
-    def __init__(self, signal, chunk_size):
-        self.signal = signal
+    def __init__(self, signal_idx, chunk_size):
+        (self.signal, self.SAMPLE_RATE), self.label = SpeechAudioDataset.getitem(signal_idx)
         self.chunk = chunk_size
-        self.SAMPLING_RATE = 44100
         self.spectrogram_fs, self.spectrogram_t, self.spectrogram = spectrogram(self.signal, fs=self.SAMPLING_RATE, window='hanning')
 
     def mfc(self):
@@ -82,6 +81,8 @@ class SpeechSpectrogramDataset(SpeechDataset):
         mfc_object = torchaudio.transforms.MFCC(sample_rate=self.SAMPLING_RATE, n_mfcc=COEFFICIENTS_NUM)
         coefficients = mfc_object(self.signal)
 
+        return coefficients
+
     def plot_spectrogram(self):
         '''
         Plots the spectrogram to help with visualization and debugging down the line.
@@ -93,12 +94,11 @@ class SpeechSpectrogramDataset(SpeechDataset):
         '''
         
         data = [0.01, 0.02, 0.05, 0.06, 1.00, 1.11, 2.3]
-        (dummy, sad) = sc.wavfile.read('sad071.wav')
-        (dummy1, angry) = sc.wavfile.read('angry087.wav')
+        (dummy, signal) = wavfile.read(self.label)
+        #(dummy1, angry) = wavfile.read('angry087.wav')
         #print(sad.shape)
-        rate = 44100
         #(dummy, noise) = sc.wavfile.read('compressed5.wav')
-        plt.specgram(sad, NFFT = 1000, Fs = rate, cmap = "rainbow", scale_by_freq = True, mode = 'magnitude')
-        plt.specgram(angry, NFFT = 1000, Fs = rate, cmap = "rainbow", scale_by_freq = True, mode = 'magnitude')
+        plt.specgram(signal, NFFT = 1000, Fs = self.SAMPLE_RATE, cmap = "rainbow", scale_by_freq = True, mode = 'magnitude')
+        #plt.specgram(angry, NFFT = 1000, Fs = rate, cmap = "rainbow", scale_by_freq = True, mode = 'magnitude')
 
         
