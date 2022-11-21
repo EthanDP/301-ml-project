@@ -14,11 +14,12 @@ import torchaudio
 # Parent class with methods used by all types of speech datasets
 class SpeechDataset(Dataset):
     def __init__(self):
-        self.LABELS = set(("calm", "happy", "sad", "angry", "fearful", "disgust", "surprised"))
+        self.LABELS = set(("calm", "happy", "sad", "angry", "fearful", "disgust", "surprised", "neutral"))
         super().__init__()
 
     def get_labels(self, file_dir, file_type):
         abs_path = os.path.join(os.getcwd(), "..", file_dir)
+        print(abs_path)
         files = os.listdir(abs_path)
 
         labels = []
