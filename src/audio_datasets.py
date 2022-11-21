@@ -18,7 +18,7 @@ class SpeechDataset(Dataset):
         super().__init__()
 
     def get_labels(self, file_dir, file_type):
-        abs_path = os.path.join(os.getcwd, "..", file_dir)
+        abs_path = os.path.join(os.getcwd(), "..", file_dir)
         files = os.listdir(abs_path)
 
         labels = []
