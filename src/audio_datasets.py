@@ -12,11 +12,28 @@ import matplotlib.pyplot as plt
 import torchaudio
 
 # Parent class with methods used by all types of speech datasets
+class SpeechDataset(Dataset):
+    def __init__(self):
+        self.LABELS = set(("calm", "happy", "sad", "angry", "fearful", "disgust", "surprised"))
+        super().__init__()
+
+    def get_labels(self, file_dir, file_type):
+        abs_path = os.path.join(os.getcwd(), "..", file_dir)
+        print(abs_path)
+        files = os.listdir(abs_path)
+
+        labels = []
+
+        for file in files:
+            if os.path.isfile(file) and file_type in file:
+                for label in self.LABELS:
+                    if label in file:
+                        labels.append((file, label))
+
        
-class SpeechAudioDataset(Dataset):
+class SpeechAudioDataset(SpeechDataset):
     def __init__(self, wav_dir, transform=None, target_transform=None):
         self.wav_labels = self.get_labels(wav_dir, ".wav")
-        self.LABELS = set(("calm", "happy", "sad", "angry", "fearful", "disgust", "surprised"))
         self.wav_dir = wav_dir
         self.transform = transform
         self.target_transform = target_transform
@@ -33,19 +50,6 @@ class SpeechAudioDataset(Dataset):
         if self.target_transform:
             label = self.target_transform(label)
         return (audio, samplerate), label
-
-    def get_labels(self, file_dir, file_type):
-        abs_path = os.path.join(os.getcwd(), "..", file_dir)
-        print(abs_path)
-        files = os.listdir(abs_path)
-
-        labels = []
-
-        for file in files:
-            if os.path.isfile(file) and file_type in file:
-                for label in self.LABELS:
-                    if label in file:
-                        labels.append((file, label))
 
 
 # implementation in progress
